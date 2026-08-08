@@ -1,0 +1,28 @@
+# Only the five required, non-sensitive outputs live here.
+# Do NOT add anything sensitive (DB passwords, IAM secrets) — `terraform output -json`
+# prints sensitive values in full regardless of the `sensitive = true` flag.
+
+output "cluster_endpoint" {
+  description = "EKS cluster API endpoint"
+  value       = "" # wired up in feature/eks-cluster
+}
+
+output "cluster_name" {
+  description = "EKS cluster name"
+  value       = var.cluster_name
+}
+
+output "region" {
+  description = "AWS region"
+  value       = var.aws_region
+}
+
+output "vpc_id" {
+  description = "VPC ID"
+  value       = "" # wired up in feature/networking
+}
+
+output "assets_bucket_name" {
+  description = "S3 bucket receiving product image uploads"
+  value       = local.assets_bucket_name
+}
