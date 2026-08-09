@@ -19,7 +19,7 @@ output "region" {
 
 output "vpc_id" {
   description = "VPC ID"
-  value       = "" # wired up in feature/networking
+  value       = module.networking.vpc_id
 }
 
 output "assets_bucket_name" {
