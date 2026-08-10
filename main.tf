@@ -17,6 +17,14 @@ module "eks" {
   public_subnet_ids   = module.networking.public_subnet_ids
 }
 
+module "data_layer" {
+  source = "./modules/data-layer"
+
+  vpc_id                         = module.networking.vpc_id
+  private_subnet_ids             = module.networking.private_subnet_ids
+  eks_cluster_security_group_id  = module.eks.cluster_security_group_id
+}
+
 
 
 # module "eks"         { source = "./modules/eks" ... }         # feature/eks-cluster
