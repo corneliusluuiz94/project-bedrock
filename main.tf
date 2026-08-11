@@ -25,9 +25,18 @@ module "data_layer" {
   eks_cluster_security_group_id  = module.eks.cluster_security_group_id
 }
 
+module "iam" {
+  source = "./modules/iam"
+
+  dev_iam_user      = var.dev_iam_user
+  cluster_name      = var.cluster_name
+  app_namespace     = var.app_namespace
+  assets_bucket_arn = "arn:aws:s3:::${local.assets_bucket_name}" # bucket itself is created in feature/serverless
+}
 
 
-# module "eks"         { source = "./modules/eks" ... }         # feature/eks-cluster
+
+
 # module "data_layer"  { source = "./modules/data-layer" ... }  # feature/data-layer
 # module "iam"         { source = "./modules/iam" ... }         # feature/security-access
 # module "serverless"  { source = "./modules/serverless" ... }  # feature/serverless

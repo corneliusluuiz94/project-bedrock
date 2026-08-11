@@ -10,8 +10,18 @@ resource "aws_eks_cluster" "main" {
     endpoint_public_access  = true # kept open for kubectl from your machine during the assessment; tighten for real prod
   }
 
+
+  # Required for EKS Access Entries (used in feature/security-access) to work.
+  # API_AND_CONFIG_MAP keeps the legacy aws-auth ConfigMap path available too,
+  # even though this project doesn't use it — purely additive, no disruption.
+  access_config {
+    authentication_mode = "API_AND_CONFIG_MAP"
+    bootstrap_cluster_creator_admin_permissions = true
+  }
   # Control plane logging (assessment section 4.4) — ships to CloudWatch automatically,
   # no extra add-on needed for these five log types.
+
+
   enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
   depends_on = [
