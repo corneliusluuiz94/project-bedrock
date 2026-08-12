@@ -46,6 +46,15 @@ module "k8s" {
   postgres_secret_arn = module.data_layer.postgres_secret_arn
 }
 
+module "observability" {
+  source = "./modules/observability"
+
+  cluster_name       = var.cluster_name
+  oidc_provider_arn  = module.eks.oidc_provider_arn
+  oidc_provider_url  = module.eks.oidc_provider_url
+}
+
+
 # module "data_layer"  { source = "./modules/data-layer" ... }  # feature/data-layer
 # module "iam"         { source = "./modules/iam" ... }         # feature/security-access
 # module "serverless"  { source = "./modules/serverless" ... }  # feature/serverless
