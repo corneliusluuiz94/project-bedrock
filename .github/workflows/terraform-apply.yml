@@ -2,7 +2,7 @@ name: Terraform Apply
 
 on:
   push:
-    branches: [main]
+    branches: [main, review]
 
 permissions:
   id-token: write   # required for OIDC
