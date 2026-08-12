@@ -54,6 +54,13 @@ module "observability" {
   oidc_provider_url  = module.eks.oidc_provider_url
 }
 
+module "serverless" {
+  source = "./modules/serverless"
+
+  assets_bucket_name   = local.assets_bucket_name
+  lambda_function_name = var.lambda_function_name
+}
+
 
 # module "data_layer"  { source = "./modules/data-layer" ... }  # feature/data-layer
 # module "iam"         { source = "./modules/iam" ... }         # feature/security-access
