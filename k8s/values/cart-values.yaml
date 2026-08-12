@@ -1,0 +1,27 @@
+# Deploy with:
+#   helm install carts C:\Users\HP\retail-store-sample-app\src\cart\chart `
+#     -f k8s\values\cart-values.yaml --namespace retail-app
+#
+# NOTE: release name "carts" (not "cart") — this matches the service name the ui
+# chart's default endpoints comment expects (http://carts:80). fullnameOverride
+# below locks it regardless of what release name you actually type.
+#
+# Replace <CARTS_IRSA_ROLE_ARN> with:
+#   terraform state show module.iam.aws_iam_role.carts_irsa   (copy the "arn" line)
+
+fullnameOverride: carts
+
+serviceAccount:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::316762121840:role/project-bedrock-cluster-carts-dynamodb-role"
+
+app:
+  persistence:
+    provider: dynamodb
+    dynamodb:
+      tableName: carts-items # matches modules/data-layer var.carts_table_name
+      createTable: false     # table already exists via Terraform — don't let the app try to create it
+
+dynamodb:
+  create: false # do not spin up in-cluster dynamodb-local — we're using the real table

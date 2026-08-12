@@ -1,0 +1,25 @@
+# Deploy with:
+#   helm install orders C:\Users\HP\retail-store-sample-app\src\orders\chart `
+#     -f k8s\values\orders-values.yaml --namespace retail-app
+#
+# Replace <POSTGRES_ENDPOINT> with the real RDS address (format must be "host:port").
+
+fullnameOverride: orders # locks the k8s Service name to "orders" regardless of the helm release name you choose
+
+app:
+  persistence:
+    provider: postgres
+    endpoint: "project-bedrock-orders-postgres.c0vg2um4qjtd.us-east-1.rds.amazonaws.com:5432"
+    database: orders
+    secret:
+      create: false # Terraform creates this Secret directly from Secrets Manager — no plaintext password here
+      name: orders-db
+
+  messaging:
+    provider: rabbitmq # message broker stays in-cluster, per assessment section 4.2 (allowed to run as a pod)
+
+postgresql:
+  create: false # do not spin up an in-cluster Postgres — we're using RDS
+
+rabbitmq:
+  create: true # in-cluster RabbitMQ pod — chart wires the address and its own secret automatically

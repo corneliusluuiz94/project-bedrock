@@ -1,0 +1,19 @@
+# Deploy with:
+#   helm install catalog C:\Users\HP\retail-store-sample-app\src\catalog\chart `
+#     -f k8s\values\catalog-values.yaml --namespace retail-app
+#
+# Replace <MYSQL_ENDPOINT> with the real RDS address (format must be "host:port").
+
+fullnameOverride: catalog # locks the k8s Service name to "catalog" regardless of the helm release name you choose
+
+app:
+  persistence:
+    provider: mysql
+    endpoint: "project-bedrock-catalog-mysql.c0vg2um4qjtd.us-east-1.rds.amazonaws.com:3306"
+    database: catalog
+    secret:
+      create: false # Terraform creates this Secret directly from Secrets Manager — no plaintext password here
+      name: catalog-db
+
+mysql:
+  create: false # do not spin up an in-cluster MySQL — we're using RDS
