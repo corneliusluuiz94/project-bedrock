@@ -1,0 +1,15 @@
+# Deploy with:
+#   helm install checkout C:\Users\HP\retail-store-sample-app\src\checkout\chart `
+#     -f k8s\values\checkout-values.yaml --namespace retail-app
+
+fullnameOverride: checkout
+
+app:
+  persistence:
+    provider: redis # in-cluster Redis is fine per assessment section 4.2 (message brokers/caches may run as pods)
+
+  endpoints:
+    orders: http://orders:80 # matches fullnameOverride: orders in orders-values.yaml
+
+redis:
+  create: true # spin up the in-cluster Redis pod that comes with this chart

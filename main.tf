@@ -32,10 +32,19 @@ module "iam" {
   cluster_name      = var.cluster_name
   app_namespace     = var.app_namespace
   assets_bucket_arn = "arn:aws:s3:::${local.assets_bucket_name}" # bucket itself is created in feature/serverless
+
+  oidc_provider_arn = module.eks.oidc_provider_arn
+  oidc_provider_url = module.eks.oidc_provider_url
+  carts_table_arn   = module.data_layer.carts_table_arn
 }
 
+module "k8s" {
+  source = "./modules/k8s"
 
-
+  namespace           = var.app_namespace
+  mysql_secret_arn    = module.data_layer.mysql_secret_arn
+  postgres_secret_arn = module.data_layer.postgres_secret_arn
+}
 
 # module "data_layer"  { source = "./modules/data-layer" ... }  # feature/data-layer
 # module "iam"         { source = "./modules/iam" ... }         # feature/security-access

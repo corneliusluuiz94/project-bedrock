@@ -1,0 +1,31 @@
+# Deploy with:
+#   helm install ui C:\Users\HP\retail-store-sample-app\src\ui\chart `
+#     -f k8s\values\ui-values.yaml --namespace retail-app
+#
+# Requires the AWS Load Balancer Controller to already be running in the cluster
+# (installed via the eks module — see feature/ingress-controller) before this
+# Ingress resource will actually provision a real ALB.
+
+fullnameOverride: ui
+
+app:
+  endpoints:
+    catalog: http://catalog:80
+    carts: http://carts:80
+    orders: http://orders:80
+    checkout: http://checkout:80
+    # recommendations: intentionally omitted — not part of this assessment's required scope
+
+  chat:
+    enabled: true
+    provider: mock # hard-coded response, zero cost, no IAM/Bedrock model access needed — just proves the chat button/UI works
+
+ingress:
+  enabled: true
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-path: /actuator/health/liveness
+    alb.ingress.kubernetes.io/tags: Project=tinyuka-2025-capstone # LB Controller creates the ALB/target groups outside Terraform's default_tags — this is the only way those get the mandatory tag
+  hosts:
+    - "" # leave blank to accept traffic on the ALB's own DNS name; set a real/nip.io host here for bonus 5.2 (TLS via ACM)
