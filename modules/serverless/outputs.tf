@@ -1,0 +1,11 @@
+output "bucket_name" {
+  value = aws_s3_bucket.assets.id
+}
+
+output "bucket_arn" {
+  value = aws_s3_bucket.assets.arn
+}
+
+output "lambda_function_name" {
+  value = aws_lambda_function.asset_processor.function_name
+}
