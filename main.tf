@@ -68,6 +68,14 @@ module "cicd" {
   cluster_name = var.cluster_name
 }
 
+module "cost_guardrails" {
+  source = "./modules/cost-guardrails"
+
+  budget_alert_email = var.budget_alert_email
+  project_tag        = var.project_tag
+}
+
+
 # module "data_layer"  { source = "./modules/data-layer" ... }  # feature/data-layer
 # module "iam"         { source = "./modules/iam" ... }         # feature/security-access
 # module "serverless"  { source = "./modules/serverless" ... }  # feature/serverless
