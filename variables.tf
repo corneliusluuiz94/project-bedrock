@@ -70,3 +70,9 @@ variable "budget_alert_email" {
   description = "Email address that receives the AWS Budget alert"
   type        = string
 }
+
+variable "nip_io_host" {
+  description = "Set on the SECOND apply once you know the ALB's IP — see modules/tls/variables.tf for the two-step process"
+  type        = string
+  default     = null
+}

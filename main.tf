@@ -75,6 +75,13 @@ module "cost_guardrails" {
   project_tag        = var.project_tag
 }
 
+module "tls" {
+  source = "./modules/tls"
+
+  nip_io_host = var.nip_io_host # leave null for the first apply — see modules/tls/variables.tf
+}
+
+
 
 # module "data_layer"  { source = "./modules/data-layer" ... }  # feature/data-layer
 # module "iam"         { source = "./modules/iam" ... }         # feature/security-access

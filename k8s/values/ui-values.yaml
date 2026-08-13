@@ -6,6 +6,17 @@
 # (installed via the eks module — see feature/ingress-controller) before this
 # Ingress resource will actually provision a real ALB.
 
+# TWO-STEP TLS SETUP (see modules/tls/variables.tf for why):
+#   Step 1: leave "hosts" below as-is (empty), apply everything, deploy.
+#           `kubectl get ingress -n retail-app` once it's ready, note the ALB
+#           address, resolve it to an IP: `nslookup <alb-address>`
+#   Step 2: set var.nip_io_host to "<ip-with-dashes>.nip.io" in terraform.tfvars,
+#           update the "hosts" line below to match, terraform apply again,
+#           then re-run deploy.ps1 (or `helm upgrade --install ui ...` again)
+#           so the ingress picks up the new host + cert ARN.
+
+
+
 fullnameOverride: ui
 
 app:
@@ -27,5 +38,10 @@ ingress:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/healthcheck-path: /actuator/health/liveness
     alb.ingress.kubernetes.io/tags: Project=tinyuka-2025-capstone # LB Controller creates the ALB/target groups outside Terraform's default_tags — this is the only way those get the mandatory tag
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:us-east-1:316762121840:certificate/9e198e9a-9016-440f-afc1-82aaf9cdf732" # from: terraform state show module.tls.aws_acm_certificate.alb_cert
+    alb.ingress.kubernetes.io/ssl-redirect: "443" # HTTP requests get redirected to HTTPS automatically
   hosts:
+    - "3-232-152-190.nip.io"
     - "" # leave blank to accept traffic on the ALB's own DNS name; set a real/nip.io host here for bonus 5.2 (TLS via ACM)
+    - "" # step 2: set to your nip.io host, e.g. "1-2-3-4.nip.io"
