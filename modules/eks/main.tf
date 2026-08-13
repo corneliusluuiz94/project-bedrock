@@ -69,3 +69,20 @@ resource "aws_eks_node_group" "main" {
     aws_iam_role_policy_attachment.node_ecr_readonly,
   ]
 }
+
+# ---------- EKS Access Entry for CI/CD Pipeline ----------
+resource "aws_eks_access_entry" "github_actions" {
+  cluster_name  = aws_eks_cluster.main.name
+  principal_arn = "arn:aws:iam::316762121840:role/project-bedrock-cluster-github-actions-role"
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "github_actions_admin" {
+  cluster_name  = aws_eks_cluster.main.name
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  principal_arn = "arn:aws:iam::316762121840:role/project-bedrock-cluster-github-actions-role"
+
+  access_scope {
+    type = "cluster"
+  }
+}

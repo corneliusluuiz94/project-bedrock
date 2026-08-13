@@ -61,6 +61,12 @@ module "serverless" {
   lambda_function_name = var.lambda_function_name
 }
 
+module "cicd" {
+  source = "./modules/cicd"
+
+  github_repo  = var.github_repo
+  cluster_name = var.cluster_name
+}
 
 # module "data_layer"  { source = "./modules/data-layer" ... }  # feature/data-layer
 # module "iam"         { source = "./modules/iam" ... }         # feature/security-access
