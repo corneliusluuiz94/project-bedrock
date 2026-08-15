@@ -81,6 +81,12 @@ module "tls" {
   nip_io_host = var.nip_io_host # leave null for the first apply — see modules/tls/variables.tf
 }
 
+module "network_policies" {
+  source = "./modules/network-policies"
+
+  namespace = var.app_namespace
+  vpc_cidr  = module.networking.vpc_cidr
+}
 
 
 # module "data_layer"  { source = "./modules/data-layer" ... }  # feature/data-layer
