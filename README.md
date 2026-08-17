@@ -4,7 +4,8 @@ Production-grade EKS deployment for the retail-store-sample-app, built as a
 graded capstone. Infrastructure is provisioned with Terraform, deployed to
 Kubernetes via Helm, and automated via GitHub Actions.
 
-![Architecture Diagram](./architecture.png)
+<img width="1147" height="1771" alt="architecture" src="https://github.com/user-attachments/assets/c84f8d2c-41b7-4bdf-97e1-e51d8c081c97" />
+
 
 ## Tech Stack
 
