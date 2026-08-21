@@ -48,12 +48,12 @@ resource "aws_iam_role_policy" "lambda_permissions" {
 # ---------- Lambda function ----------
 resource "aws_lambda_function" "asset_processor" {
   function_name    = var.lambda_function_name
-  role              = aws_iam_role.lambda_exec.arn
-  handler           = "index.handler"
-  runtime           = "python3.13"
-  filename          = data.archive_file.lambda_zip.output_path
-  source_code_hash  = data.archive_file.lambda_zip.output_base64sha256
-  timeout           = 10
+  role             = aws_iam_role.lambda_exec.arn
+  handler          = "index.handler"
+  runtime          = "python3.13"
+  filename         = data.archive_file.lambda_zip.output_path
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  timeout          = 10
 }
 
 # ---------- S3 -> Lambda trigger ----------

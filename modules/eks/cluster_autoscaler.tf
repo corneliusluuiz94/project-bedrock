@@ -72,7 +72,7 @@ data "aws_iam_policy_document" "cluster_autoscaler_policy" {
   }
 
   statement {
-    sid     = "MutateOwnedAsgOnly"
+    sid = "MutateOwnedAsgOnly"
     actions = [
       "autoscaling:SetDesiredCapacity",
       "autoscaling:TerminateInstanceInAutoScalingGroup",

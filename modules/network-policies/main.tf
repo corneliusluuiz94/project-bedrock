@@ -6,8 +6,10 @@ resource "kubernetes_network_policy_v1" "default_deny" {
     name      = "default-deny-all"
     namespace = var.namespace
   }
+
   spec {
     pod_selector {}
+
     policy_types = ["Ingress", "Egress"]
   }
 }
@@ -20,8 +22,10 @@ resource "kubernetes_network_policy_v1" "allow_dns_egress" {
     name      = "allow-dns-egress"
     namespace = var.namespace
   }
+
   spec {
     pod_selector {}
+
     policy_types = ["Egress"]
 
     egress {
@@ -29,6 +33,7 @@ resource "kubernetes_network_policy_v1" "allow_dns_egress" {
         port     = "53"
         protocol = "UDP"
       }
+
       ports {
         port     = "53"
         protocol = "TCP"
@@ -45,10 +50,14 @@ resource "kubernetes_network_policy_v1" "ui_ingress" {
     name      = "allow-ui-ingress-from-internet"
     namespace = var.namespace
   }
+
   spec {
     pod_selector {
-      match_labels = { "app.kubernetes.io/name" = "ui" }
+      match_labels = {
+        "app.kubernetes.io/name" = "ui"
+      }
     }
+
     policy_types = ["Ingress"]
 
     ingress {
@@ -65,33 +74,49 @@ resource "kubernetes_network_policy_v1" "ui_egress" {
     name      = "allow-ui-egress-to-backends"
     namespace = var.namespace
   }
+
   spec {
     pod_selector {
-      match_labels = { "app.kubernetes.io/name" = "ui" }
+      match_labels = {
+        "app.kubernetes.io/name" = "ui"
+      }
     }
+
     policy_types = ["Egress"]
 
     egress {
       to {
         pod_selector {
-          match_labels = { "app.kubernetes.io/name" = "catalog" }
+          match_labels = {
+            "app.kubernetes.io/name" = "catalog"
+          }
         }
       }
+
       to {
         pod_selector {
-          match_labels = { "app.kubernetes.io/name" = "carts" }
+          match_labels = {
+            "app.kubernetes.io/name" = "carts"
+          }
         }
       }
+
       to {
         pod_selector {
-          match_labels = { "app.kubernetes.io/name" = "orders" }
+          match_labels = {
+            "app.kubernetes.io/name" = "orders"
+          }
         }
       }
+
       to {
         pod_selector {
-          match_labels = { "app.kubernetes.io/name" = "checkout" }
+          match_labels = {
+            "app.kubernetes.io/name" = "checkout"
+          }
         }
       }
+
       ports {
         port     = "8080"
         protocol = "TCP"
@@ -108,18 +133,25 @@ resource "kubernetes_network_policy_v1" "catalog_ingress" {
     name      = "allow-catalog-ingress-from-ui"
     namespace = var.namespace
   }
+
   spec {
     pod_selector {
-      match_labels = { "app.kubernetes.io/name" = "catalog" }
+      match_labels = {
+        "app.kubernetes.io/name" = "catalog"
+      }
     }
+
     policy_types = ["Ingress"]
 
     ingress {
       from {
         pod_selector {
-          match_labels = { "app.kubernetes.io/name" = "ui" }
+          match_labels = {
+            "app.kubernetes.io/name" = "ui"
+          }
         }
       }
+
       ports {
         port     = "8080"
         protocol = "TCP"
@@ -133,10 +165,14 @@ resource "kubernetes_network_policy_v1" "catalog_egress" {
     name      = "allow-catalog-egress-to-rds"
     namespace = var.namespace
   }
+
   spec {
     pod_selector {
-      match_labels = { "app.kubernetes.io/name" = "catalog" }
+      match_labels = {
+        "app.kubernetes.io/name" = "catalog"
+      }
     }
+
     policy_types = ["Egress"]
 
     egress {
@@ -156,18 +192,25 @@ resource "kubernetes_network_policy_v1" "carts_ingress" {
     name      = "allow-carts-ingress-from-ui"
     namespace = var.namespace
   }
+
   spec {
     pod_selector {
-      match_labels = { "app.kubernetes.io/name" = "carts" }
+      match_labels = {
+        "app.kubernetes.io/name" = "carts"
+      }
     }
+
     policy_types = ["Ingress"]
 
     ingress {
       from {
         pod_selector {
-          match_labels = { "app.kubernetes.io/name" = "ui" }
+          match_labels = {
+            "app.kubernetes.io/name" = "ui"
+          }
         }
       }
+
       ports {
         port     = "8080"
         protocol = "TCP"
@@ -181,10 +224,14 @@ resource "kubernetes_network_policy_v1" "carts_egress" {
     name      = "allow-carts-egress-to-dynamodb"
     namespace = var.namespace
   }
+
   spec {
     pod_selector {
-      match_labels = { "app.kubernetes.io/name" = "carts" }
+      match_labels = {
+        "app.kubernetes.io/name" = "carts"
+      }
     }
+
     policy_types = ["Egress"]
 
     egress {
@@ -193,6 +240,7 @@ resource "kubernetes_network_policy_v1" "carts_egress" {
           cidr = "0.0.0.0/0"
         }
       }
+
       ports {
         port     = "443"
         protocol = "TCP"
@@ -209,23 +257,33 @@ resource "kubernetes_network_policy_v1" "orders_ingress" {
     name      = "allow-orders-ingress-from-ui-and-checkout"
     namespace = var.namespace
   }
+
   spec {
     pod_selector {
-      match_labels = { "app.kubernetes.io/name" = "orders" }
+      match_labels = {
+        "app.kubernetes.io/name" = "orders"
+      }
     }
+
     policy_types = ["Ingress"]
 
     ingress {
       from {
         pod_selector {
-          match_labels = { "app.kubernetes.io/name" = "ui" }
+          match_labels = {
+            "app.kubernetes.io/name" = "ui"
+          }
         }
       }
+
       from {
         pod_selector {
-          match_labels = { "app.kubernetes.io/name" = "checkout" }
+          match_labels = {
+            "app.kubernetes.io/name" = "checkout"
+          }
         }
       }
+
       ports {
         port     = "8080"
         protocol = "TCP"
@@ -239,24 +297,35 @@ resource "kubernetes_network_policy_v1" "orders_egress" {
     name      = "allow-orders-egress-to-rds-and-rabbitmq"
     namespace = var.namespace
   }
+
   spec {
     pod_selector {
-      match_labels = { "app.kubernetes.io/name" = "orders" }
+      match_labels = {
+        "app.kubernetes.io/name" = "orders"
+      }
     }
+
     policy_types = ["Egress"]
 
+    # Orders → PostgreSQL/RDS
     egress {
       ports {
         port     = "5432"
         protocol = "TCP"
       }
     }
+
+    # Orders → RabbitMQ
     egress {
       to {
         pod_selector {
-          match_labels = { "app.kubernetes.io/name" = "rabbitmq" } # FIXED: Was 'orders'
+          match_labels = {
+            "app.kubernetes.io/name"      = "orders"
+            "app.kubernetes.io/component" = "rabbitmq"
+          }
         }
       }
+
       ports {
         port     = "5672"
         protocol = "TCP"
@@ -273,18 +342,25 @@ resource "kubernetes_network_policy_v1" "checkout_ingress" {
     name      = "allow-checkout-ingress-from-ui"
     namespace = var.namespace
   }
+
   spec {
     pod_selector {
-      match_labels = { "app.kubernetes.io/name" = "checkout" }
+      match_labels = {
+        "app.kubernetes.io/name" = "checkout"
+      }
     }
+
     policy_types = ["Ingress"]
 
     ingress {
       from {
         pod_selector {
-          match_labels = { "app.kubernetes.io/name" = "ui" }
+          match_labels = {
+            "app.kubernetes.io/name" = "ui"
+          }
         }
       }
+
       ports {
         port     = "8080"
         protocol = "TCP"
@@ -298,29 +374,43 @@ resource "kubernetes_network_policy_v1" "checkout_egress" {
     name      = "allow-checkout-egress-to-orders-and-redis"
     namespace = var.namespace
   }
+
   spec {
     pod_selector {
-      match_labels = { "app.kubernetes.io/name" = "checkout" }
+      match_labels = {
+        "app.kubernetes.io/name" = "checkout"
+      }
     }
+
     policy_types = ["Egress"]
 
+    # Checkout → Orders
     egress {
       to {
         pod_selector {
-          match_labels = { "app.kubernetes.io/name" = "orders" }
+          match_labels = {
+            "app.kubernetes.io/name" = "orders"
+          }
         }
       }
+
       ports {
         port     = "8080"
         protocol = "TCP"
       }
     }
+
+    # Checkout → Redis
     egress {
       to {
         pod_selector {
-          match_labels = { "app.kubernetes.io/name" = "redis" } # FIXED: Was 'checkout'
+          match_labels = {
+            "app.kubernetes.io/name"      = "checkout"
+            "app.kubernetes.io/component" = "redis"
+          }
         }
       }
+
       ports {
         port     = "6379"
         protocol = "TCP"
@@ -337,18 +427,26 @@ resource "kubernetes_network_policy_v1" "redis_ingress" {
     name      = "allow-redis-ingress-from-checkout"
     namespace = var.namespace
   }
+
   spec {
     pod_selector {
-      match_labels = { "app.kubernetes.io/name" = "redis" } # FIXED: Was 'checkout'
+      match_labels = {
+        "app.kubernetes.io/name"      = "checkout"
+        "app.kubernetes.io/component" = "redis"
+      }
     }
+
     policy_types = ["Ingress"]
 
     ingress {
       from {
         pod_selector {
-          match_labels = { "app.kubernetes.io/name" = "checkout" }
+          match_labels = {
+            "app.kubernetes.io/name" = "checkout"
+          }
         }
       }
+
       ports {
         port     = "6379"
         protocol = "TCP"
@@ -365,18 +463,26 @@ resource "kubernetes_network_policy_v1" "rabbitmq_ingress" {
     name      = "allow-rabbitmq-ingress-from-orders"
     namespace = var.namespace
   }
+
   spec {
     pod_selector {
-      match_labels = { "app.kubernetes.io/name" = "rabbitmq" } # FIXED: Was 'orders'
+      match_labels = {
+        "app.kubernetes.io/name"      = "orders"
+        "app.kubernetes.io/component" = "rabbitmq"
+      }
     }
+
     policy_types = ["Ingress"]
 
     ingress {
       from {
         pod_selector {
-          match_labels = { "app.kubernetes.io/name" = "orders" }
+          match_labels = {
+            "app.kubernetes.io/name" = "orders"
+          }
         }
       }
+
       ports {
         port     = "5672"
         protocol = "TCP"

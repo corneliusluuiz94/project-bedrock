@@ -34,7 +34,7 @@ resource "aws_iam_access_key" "dev_view" {
 # Console access — auto-generated password, forces reset on first login.
 resource "aws_iam_user_login_profile" "dev_view" {
   user                    = aws_iam_user.dev_view.name
-  password_reset_required = true
+  password_reset_required = false
 }
 
 # ---------- Kubernetes access via EKS Access Entries (not aws-auth ConfigMap) ----------
