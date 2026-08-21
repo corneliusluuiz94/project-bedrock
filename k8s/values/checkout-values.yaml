@@ -10,6 +10,7 @@ app:
 
   endpoints:
     orders: http://orders:80 # matches fullnameOverride: orders in orders-values.yaml
-
+    
 redis:
   create: true # spin up the in-cluster Redis pod that comes with this chart
+  

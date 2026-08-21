@@ -11,18 +11,27 @@ module "networking" {
 module "eks" {
   source = "./modules/eks"
 
-  cluster_name        = var.cluster_name
-  vpc_id              = module.networking.vpc_id
-  private_subnet_ids  = module.networking.private_subnet_ids
-  public_subnet_ids   = module.networking.public_subnet_ids
+  cluster_name       = var.cluster_name
+  vpc_id             = module.networking.vpc_id
+  private_subnet_ids = module.networking.private_subnet_ids
+  public_subnet_ids  = module.networking.public_subnet_ids
+}
+
+# Namespace resource managed directly so k8s resources and network policies have a target namespace
+resource "kubernetes_namespace" "retail_app" {
+  metadata {
+    name = var.app_namespace
+  }
+
+  depends_on = [module.eks]
 }
 
 module "data_layer" {
   source = "./modules/data-layer"
 
-  vpc_id                         = module.networking.vpc_id
-  private_subnet_ids             = module.networking.private_subnet_ids
-  eks_cluster_security_group_id  = module.eks.cluster_security_group_id
+  vpc_id                        = module.networking.vpc_id
+  private_subnet_ids            = module.networking.private_subnet_ids
+  eks_cluster_security_group_id = module.eks.cluster_security_group_id
 }
 
 module "iam" {
@@ -36,6 +45,9 @@ module "iam" {
   oidc_provider_arn = module.eks.oidc_provider_arn
   oidc_provider_url = module.eks.oidc_provider_url
   carts_table_arn   = module.data_layer.carts_table_arn
+
+
+  depends_on = [module.eks]
 }
 
 module "k8s" {
@@ -44,14 +56,21 @@ module "k8s" {
   namespace           = var.app_namespace
   mysql_secret_arn    = module.data_layer.mysql_secret_arn
   postgres_secret_arn = module.data_layer.postgres_secret_arn
+
+  depends_on = [
+    module.eks,
+    kubernetes_namespace.retail_app
+  ]
 }
 
 module "observability" {
   source = "./modules/observability"
 
-  cluster_name       = var.cluster_name
-  oidc_provider_arn  = module.eks.oidc_provider_arn
-  oidc_provider_url  = module.eks.oidc_provider_url
+  cluster_name      = var.cluster_name
+  oidc_provider_arn = module.eks.oidc_provider_arn
+  oidc_provider_url = module.eks.oidc_provider_url
+
+  depends_on = [module.eks]
 }
 
 module "serverless" {
@@ -66,6 +85,8 @@ module "cicd" {
 
   github_repo  = var.github_repo
   cluster_name = var.cluster_name
+
+  depends_on = [module.eks]
 }
 
 module "cost_guardrails" {
@@ -86,6 +107,11 @@ module "network_policies" {
 
   namespace = var.app_namespace
   vpc_cidr  = module.networking.vpc_cidr
+
+  depends_on = [
+    module.eks,
+    kubernetes_namespace.retail_app
+  ]
 }
 
 

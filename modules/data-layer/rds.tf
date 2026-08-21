@@ -27,7 +27,7 @@ resource "aws_db_instance" "mysql" {
   vpc_security_group_ids = [aws_security_group.mysql.id]
   publicly_accessible    = false # private subnet only, per assessment security requirement
 
-  multi_az            = false # single-AZ is sufficient and preferred for cost, per assessment
+  multi_az                = false # single-AZ is sufficient and preferred for cost, per assessment
   backup_retention_period = var.backup_retention_days
   skip_final_snapshot     = true # fine for an assessment; would be false in real prod
 

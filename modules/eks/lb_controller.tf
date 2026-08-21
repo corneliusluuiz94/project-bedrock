@@ -60,10 +60,10 @@ resource "aws_iam_role_policy_attachment" "lb_controller" {
 }
 
 resource "helm_release" "lb_controller" {
-  name       = "aws-load-balancer-controller"
-  chart      = "${path.root}/charts/aws-load-balancer-controller-1.13.4.tgz"
-  namespace  = "kube-system"
-  
+  name      = "aws-load-balancer-controller"
+  chart     = "${path.root}/charts/aws-load-balancer-controller-1.13.4.tgz"
+  namespace = "kube-system"
+
   set {
     name  = "clusterName"
     value = aws_eks_cluster.main.name

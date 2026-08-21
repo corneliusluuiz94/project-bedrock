@@ -33,15 +33,18 @@ app:
 
 ingress:
   enabled: true
+  className: alb
   annotations:
+    kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/healthcheck-path: /actuator/health/liveness
     alb.ingress.kubernetes.io/tags: Project=tinyuka-2025-capstone # LB Controller creates the ALB/target groups outside Terraform's default_tags — this is the only way those get the mandatory tag
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
-    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:us-east-1:316762121840:certificate/9e198e9a-9016-440f-afc1-82aaf9cdf732" # from: terraform state show module.tls.aws_acm_certificate.alb_cert
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:us-east-1:316762121840:certificate/25ccf51c-a9cf-47c4-a235-238f9911684f" # from: terraform state show module.tls.aws_acm_certificate.alb_cert
     alb.ingress.kubernetes.io/ssl-redirect: "443" # HTTP requests get redirected to HTTPS automatically
   hosts:
-    - "3-232-152-190.nip.io"
+    - "3-212-160-198.nip.io"
+    
     - "" # leave blank to accept traffic on the ALB's own DNS name; set a real/nip.io host here for bonus 5.2 (TLS via ACM)
     - "" # step 2: set to your nip.io host, e.g. "1-2-3-4.nip.io"
